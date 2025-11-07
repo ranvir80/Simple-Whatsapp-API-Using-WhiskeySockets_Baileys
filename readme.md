@@ -1,255 +1,503 @@
-# WhatsApp API Server - Enhanced Version 🚀
+<div align="center">
 
-Production-ready, single-file Baileys-based WhatsApp bot with Supabase storage, Telegram media storage, multi-webhook forwarding, and comprehensive message handling.
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=35&duration=2800&pause=2000&color=25D366&center=true&vCenter=true&width=940&lines=WhatsApp+API+Server+%F0%9F%9A%80;Enhanced+%7C+Powerful+%7C+Production+Ready;Telegram+Media+%7C+Auto+Reconnect+%7C+Always+Online" alt="Typing SVG" />
+
+<p align="center">
+  <img src="https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" />
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-2.0.0-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License" />
+  <img src="https://img.shields.io/badge/status-active-success?style=flat-square" alt="Status" />
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome" />
+</p>
+
+### 🎯 Production-Ready WhatsApp Bot with Advanced Features
+
+*Single-file implementation • Supabase Storage • Telegram Media • Multi-Webhook • Auto-Reconnect • Always Online*
+
+---
+
+</div>
 
 ## ⚡ Quick Start
 
+<div align="center">
+
 ```bash
-# 1. Clone the repository
+# 🚀 Get Started in 60 Seconds!
+```
+
+</div>
+
+<table>
+<tr>
+<td width="50%">
+
+### 📦 Installation
+
+```bash
+# Clone the repository
 git clone <your-repo-url>
 cd whatsappapi
 
-# 2. Install dependencies
+# Install dependencies
 npm install
 
-# 3. Copy and configure environment variables
+# Configure environment
 cp .env.example .env
-# Edit .env with your credentials
-
-# 4. Set up Supabase database
-# Run the SQL from setup.sql in your Supabase SQL Editor
-
-# 5. Start the server
-npm start
-
-# 6. Scan QR code
-# Visit http://localhost:5000/qr and scan with WhatsApp
 ```
 
-## � Table of Contents
+</td>
+<td width="50%">
 
-- [Features](#-features)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [API Endpoints](#api-endpoints)
-- [Webhook Forwarding](#-webhook-forwarding)
-- [Reconnection Strategies](#-reconnection-strategies)
-- [Message Types Supported](#-message-types-supported)
-- [Security](#-security)
-- [Monitoring](#-monitoring)
-- [Testing](#-testing)
-- [Troubleshooting](#-troubleshooting)
-- [Deployment Tips](#-deployment-tips)
-- [Database Schema Summary](#-database-schema-summary)
+### 🔧 Setup
 
-## �🚀 Features
+```bash
+# Set up Supabase database
+# Run SQL from setup.sql
 
-- ✅ **Single file implementation** (`wa-api.js`)
-- ✅ **Supabase-only storage** (no local session files)
-- ✅ **Telegram media storage** (media files stored in Telegram using bot)
-- ✅ **Multi-webhook forwarding** with retry logic
-- ✅ **Media handling** (images, videos, documents, audio, stickers)
-- ✅ **Auto-reconnection** with smart strategies and exponential backoff
-- ✅ **QR webpage** with auto-refresh
-- ✅ **Protected send endpoint** with rate limiting
-- ✅ **Complete message logging** in Supabase
-- ✅ **Support for reactions and replies**
-- ✅ **Self-ping mechanism** to prevent server sleep on free hosting
-- ✅ **Always online presence** - bot appears online 24/7
-- ✅ **Blue tick (read receipts)** for all messages
-- ✅ **Store all outgoing messages** (sent by you)
-- ✅ **Forward all incoming messages** (no skips)
+# Start the server
+npm start
+
+# Scan QR code
+# Visit http://localhost:5000/qr
+```
+
+</td>
+</tr>
+</table>
+
+<div align="center">
+
+### 🎬 Quick Demo
+
+```mermaid
+graph LR
+    A[📱 WhatsApp] -->|Messages| B[🤖 Bot Server]
+    B -->|Store| C[💾 Supabase]
+    B -->|Media| D[📤 Telegram]
+    B -->|Forward| E[🔔 Webhooks]
+    style A fill:#25D366,stroke:#128C7E,stroke-width:2px,color:#fff
+    style B fill:#667eea,stroke:#764ba2,stroke-width:2px,color:#fff
+    style C fill:#3ECF8E,stroke:#2AA87C,stroke-width:2px,color:#fff
+    style D fill:#2CA5E0,stroke:#0088cc,stroke-width:2px,color:#fff
+    style E fill:#f093fb,stroke:#764ba2,stroke-width:2px,color:#fff
+```
+
+</div>
+
+---
+
+## 📑 Table of Contents
+
+<details open>
+<summary><b>📚 Click to expand/collapse</b></summary>
+
+- [✨ Features](#-features)
+- [📋 Prerequisites](#-prerequisites)
+- [🔧 Installation](#-installation)
+- [🎮 Usage](#-usage)
+- [🌐 API Endpoints](#-api-endpoints)
+- [📤 Webhook Forwarding](#-webhook-forwarding)
+- [🔄 Reconnection Strategies](#-reconnection-strategies)
+- [📊 Message Types](#-message-types-supported)
+- [🔒 Security](#-security)
+- [📈 Monitoring](#-monitoring)
+- [🧪 Testing](#-testing)
+- [🐛 Troubleshooting](#-troubleshooting)
+- [🚀 Deployment](#-deployment-tips)
+- [📊 Database Schema](#-database-schema-summary)
+
+</details>
+
+---
+
+## ✨ Features
+
+<div align="center">
+
+### 🎯 Core Features
+
+</div>
+
+<table>
+<tr>
+<td width="33%" align="center">
+
+### 💾 **Storage**
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+
+✅ Session Management<br/>
+✅ Message History<br/>
+✅ Connection Logs<br/>
+✅ No Local Files
+
+</td>
+<td width="33%" align="center">
+
+### 📤 **Media**
+![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)
+
+✅ Unlimited Storage<br/>
+✅ Fast Retrieval<br/>
+✅ Cloud-Based<br/>
+✅ Free Forever
+
+</td>
+<td width="33%" align="center">
+
+### 🔔 **Webhooks**
+![N8N](https://img.shields.io/badge/n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)
+
+✅ Multi-Webhook<br/>
+✅ Retry Logic<br/>
+✅ Async Forward<br/>
+✅ Error Handling
+
+</td>
+</tr>
+</table>
+
+<div align="center">
+
+### 🚀 Advanced Features
+
+</div>
+
+<table>
+<tr>
+<td width="25%" align="center">
+
+🔄 **Auto-Reconnect**
+
+Smart exponential backoff
+
+✅ Handle all disconnect scenarios<br/>
+✅ Max 10 attempts<br/>
+✅ 5s-30s delays
+
+</td>
+<td width="25%" align="center">
+
+👁️ **Always Online**
+
+Bot appears online 24/7
+
+✅ Presence updates<br/>
+✅ Every 30 seconds<br/>
+✅ Configurable
+
+</td>
+<td width="25%" align="center">
+
+✅ **Blue Ticks**
+
+Read receipts enabled
+
+✅ All messages<br/>
+✅ Automatic<br/>
+✅ No config needed
+
+</td>
+<td width="25%" align="center">
+
+🏓 **Self-Ping**
+
+Prevent server sleep
+
+✅ Free hosting<br/>
+✅ Every 4 minutes<br/>
+✅ Auto-detect URL
+
+</td>
+</tr>
+</table>
+
+<details>
+<summary><b>🎨 Click to see ALL features</b></summary>
+
+<br/>
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| 📝 Single File | ✅ | All code in `wa-api.js` |
+| 💾 Supabase Storage | ✅ | No local session files |
+| 📤 Telegram Media | ✅ | Unlimited free storage |
+| 🔔 Multi-Webhook | ✅ | Forward to multiple URLs |
+| 🖼️ Media Handling | ✅ | Images, videos, docs, audio, stickers |
+| 🔄 Auto-Reconnect | ✅ | Smart exponential backoff |
+| 📱 QR Webpage | ✅ | Auto-refresh QR code |
+| 🔐 Protected API | ✅ | Rate limiting & auth |
+| 💬 Message Logging | ✅ | Complete history in DB |
+| 😊 Reactions | ✅ | Store and forward |
+| 💭 Replies | ✅ | Context detection |
+| 🏓 Self-Ping | ✅ | Prevent sleep on free hosting |
+| 👁️ Always Online | ✅ | Bot appears online 24/7 |
+| ✅ Blue Ticks | ✅ | Read receipts for all |
+| 📤 Store Outgoing | ✅ | Save messages you send |
+| 📥 Forward Incoming | ✅ | No message skips |
+
+</details>
+
+---
 
 ## 📋 Prerequisites
 
-- Node.js 18+ 
-- Supabase account with project created
-- WhatsApp phone number for scanning QR code
-- Telegram bot (create via @BotFather on Telegram)
-- Telegram chat ID (use @userinfobot to get your chat ID)
+<div align="center">
+
+| Requirement | Version/Details | Where to Get |
+|-------------|-----------------|--------------|
+| ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white) | 18+ | [nodejs.org](https://nodejs.org) |
+| ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white) | Account + Project | [supabase.com](https://supabase.com) |
+| ![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=flat&logo=whatsapp&logoColor=white) | Phone Number | Your phone |
+| ![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=flat&logo=telegram&logoColor=white) | Bot Token | [@BotFather](https://t.me/botfather) |
+| ![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=flat&logo=telegram&logoColor=white) | Chat ID | [@userinfobot](https://t.me/userinfobot) |
+
+</div>
+
+---
 
 ## 🔧 Installation
 
-1. **Clone or download this project**
+<div align="center">
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### 📥 Step-by-Step Setup
 
-3. **Set up Supabase database**
+</div>
 
-   Run this SQL in your Supabase SQL Editor:
+<table>
+<tr>
+<td width="33%" align="center">
 
-   ```sql
-   -- Auth data table (stores WhatsApp session files)
-   CREATE TABLE IF NOT EXISTS public.auth_data (
-     session_id TEXT NOT NULL,
-     file_name TEXT NOT NULL,
-     file_data TEXT NOT NULL,
-     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-     CONSTRAINT auth_data_pkey PRIMARY KEY (session_id, file_name)
-   ) TABLESPACE pg_default;
+#### 1️⃣ Clone
 
-   CREATE INDEX IF NOT EXISTS idx_auth_data_session 
-   ON public.auth_data USING BTREE (session_id) TABLESPACE pg_default;
+```bash
+git clone <repo-url>
+cd whatsappapi
+```
 
-   -- Messages table (stores all incoming and outgoing messages)
-   CREATE TABLE IF NOT EXISTS public.messages (
-     id BIGSERIAL NOT NULL,
-     message_id TEXT,
-     jid TEXT,
-     from_plain_phone TEXT,
-     display_name TEXT,
-     type TEXT,
-     text TEXT,
-     media_mimetype TEXT,
-     media_filename TEXT,
-     media_size BIGINT,
-     reaction_text TEXT,
-     is_reply BOOLEAN DEFAULT FALSE,
-     reply_to_message_id TEXT,
-     reply_to_text TEXT,
-     chat_type TEXT,
-     from_me BOOLEAN DEFAULT FALSE,
-     received_at TIMESTAMP WITHOUT TIME ZONE,
-     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-     raw JSONB,
-     direction TEXT,
-     media_unique_id TEXT,
-     telegram_message_id TEXT,
-     telegram_file_id TEXT,
-     CONSTRAINT messages_pkey PRIMARY KEY (id),
-     CONSTRAINT unique_media_id UNIQUE (media_unique_id)
-   ) TABLESPACE pg_default;
+</td>
+<td width="33%" align="center">
 
-   CREATE INDEX IF NOT EXISTS idx_messages_jid 
-   ON public.messages USING BTREE (jid) TABLESPACE pg_default;
+#### 2️⃣ Install
 
-   CREATE INDEX IF NOT EXISTS idx_messages_message_id 
-   ON public.messages USING BTREE (message_id) TABLESPACE pg_default;
+```bash
+npm install
+```
 
-   CREATE INDEX IF NOT EXISTS idx_messages_direction 
-   ON public.messages USING BTREE (direction) TABLESPACE pg_default;
+</td>
+<td width="33%" align="center">
 
-   CREATE INDEX IF NOT EXISTS idx_messages_created_at 
-   ON public.messages USING BTREE (created_at DESC) TABLESPACE pg_default;
+#### 3️⃣ Configure
 
-   CREATE INDEX IF NOT EXISTS idx_messages_from_plain_phone 
-   ON public.messages USING BTREE (from_plain_phone) TABLESPACE pg_default;
+```bash
+cp .env.example .env
+# Edit .env
+```
 
-   CREATE INDEX IF NOT EXISTS idx_messages_type 
-   ON public.messages USING BTREE (type) TABLESPACE pg_default;
+</td>
+</tr>
+</table>
 
-   CREATE INDEX IF NOT EXISTS idx_messages_media_unique_id 
-   ON public.messages USING BTREE (media_unique_id) TABLESPACE pg_default;
+### 3. Set up Supabase database
 
-   -- Connection logs table (monitors connection events)
-   CREATE TABLE IF NOT EXISTS public.connection_logs (
-     id BIGSERIAL NOT NULL,
-     event_type TEXT,
-     status_code INTEGER,
-     reason TEXT,
-     attempt_number INTEGER,
-     timestamp TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-     CONSTRAINT connection_logs_pkey PRIMARY KEY (id)
-   ) TABLESPACE pg_default;
+<details>
+<summary><b>📊 Click to see SQL Schema</b></summary>
 
-   CREATE INDEX IF NOT EXISTS idx_connection_logs_timestamp 
-   ON public.connection_logs USING BTREE (timestamp DESC) TABLESPACE pg_default;
+```sql
+-- Auth Data table (stores WhatsApp authentication state)
+CREATE TABLE IF NOT EXISTS public.auth_data (
+  session_id TEXT NOT NULL,
+  file_name TEXT NOT NULL,
+  file_data TEXT NOT NULL,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+  CONSTRAINT auth_data_pkey PRIMARY KEY (session_id, file_name)
+) TABLESPACE pg_default;
 
-   CREATE INDEX IF NOT EXISTS idx_connection_logs_event_type 
-   ON public.connection_logs USING BTREE (event_type) TABLESPACE pg_default;
-   ```
+CREATE INDEX IF NOT EXISTS idx_auth_data_session 
+ON public.auth_data USING BTREE (session_id) TABLESPACE pg_default;
 
-4. **Configure environment variables**
+-- Messages table (stores all incoming and outgoing messages)
+CREATE TABLE IF NOT EXISTS public.messages (
+  id BIGSERIAL NOT NULL,
+  message_id TEXT,
+  jid TEXT,
+  from_plain_phone TEXT,
+  display_name TEXT,
+  type TEXT,
+  text TEXT,
+  media_mimetype TEXT,
+  media_filename TEXT,
+  media_size BIGINT,
+  reaction_text TEXT,
+  is_reply BOOLEAN DEFAULT FALSE,
+  reply_to_message_id TEXT,
+  reply_to_text TEXT,
+  chat_type TEXT,
+  from_me BOOLEAN DEFAULT FALSE,
+  received_at TIMESTAMP WITHOUT TIME ZONE,
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+  raw JSONB,
+  direction TEXT,
+  media_unique_id TEXT,
+  telegram_message_id TEXT,
+  telegram_file_id TEXT,
+  CONSTRAINT messages_pkey PRIMARY KEY (id),
+  CONSTRAINT unique_media_id UNIQUE (media_unique_id)
+) TABLESPACE pg_default;
 
-   Copy `.env.example` to `.env` and fill in your values:
+-- Indexes for better query performance
+CREATE INDEX IF NOT EXISTS idx_messages_jid 
+ON public.messages USING BTREE (jid) TABLESPACE pg_default;
 
-   ```bash
-   cp .env.example .env
-   ```
+CREATE INDEX IF NOT EXISTS idx_messages_message_id 
+ON public.messages USING BTREE (message_id) TABLESPACE pg_default;
 
-   Edit `.env`:
-   ```env
-   # Supabase Configuration
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_KEY=your-service-role-key
-   
-   # API Security
-   AUTH_KEY=your-secret-api-key
-   
-   # Telegram Configuration (for media storage)
-   TELEGRAM_BOT_TOKEN=your-bot-token-from-botfather
-   TELEGRAM_CHAT_ID=your-telegram-chat-id
-   
-   # Webhook Configuration
-   N8N_WEBHOOKS=https://webhook1.com,https://webhook2.com
-   
-   # Server Configuration
-   PORT=5000
-   QR_POLL_INTERVAL_MS=3000
-   MAX_MEDIA_SIZE=52428800
-   
-   # Self-Ping Configuration (prevents server sleep on free hosting)
-   SELF_PING_ENABLED=true
-   SELF_PING_INTERVAL_MS=240000
-   SELF_PING_URL=https://your-app.onrender.com/health
-   
-   # Session Configuration (optional)
-   SESSION_ID=default
-   
-   # Presence Configuration (optional)
-   PRESENCE_UPDATE_INTERVAL_MS=30000
-   ```
+CREATE INDEX IF NOT EXISTS idx_messages_direction 
+ON public.messages USING BTREE (direction) TABLESPACE pg_default;
 
-   **Required Environment Variables:**
-   - `SUPABASE_URL` - Your Supabase project URL
-   - `SUPABASE_KEY` - Your Supabase service role key (found in Project Settings > API)
-   - `AUTH_KEY` - A secure random string for API authentication (generate using: `openssl rand -hex 32`)
-   - `TELEGRAM_BOT_TOKEN` - Create a bot via @BotFather on Telegram
-   - `TELEGRAM_CHAT_ID` - Your Telegram user ID (get from @userinfobot)
+CREATE INDEX IF NOT EXISTS idx_messages_created_at 
+ON public.messages USING BTREE (created_at DESC) TABLESPACE pg_default;
 
-   **Optional Environment Variables:**
-   - `N8N_WEBHOOKS` - Comma-separated webhook URLs to forward messages to
-   - `PORT` - Server port (default: 5000)
-   - `MAX_MEDIA_SIZE` - Maximum media file size in bytes (default: 52428800 = 50MB)
-   - `SELF_PING_ENABLED` - Enable self-ping to prevent sleep (default: true)
-   - `SELF_PING_INTERVAL_MS` - Self-ping interval in milliseconds (default: 240000 = 4 minutes)
-   - `SELF_PING_URL` - URL to ping (auto-detects if not set)
-   - `SESSION_ID` - Session identifier for multiple instances (default: 'default')
-   - `QR_POLL_INTERVAL_MS` - QR code refresh interval (default: 3000)
-   - `PRESENCE_UPDATE_INTERVAL_MS` - Online presence update interval (default: 30000)
+CREATE INDEX IF NOT EXISTS idx_messages_from_plain_phone 
+ON public.messages USING BTREE (from_plain_phone) TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS idx_messages_type 
+ON public.messages USING BTREE (type) TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS idx_messages_media_unique_id 
+ON public.messages USING BTREE (media_unique_id) TABLESPACE pg_default;
+
+-- Connection logs table (monitors connection events)
+CREATE TABLE IF NOT EXISTS public.connection_logs (
+  id BIGSERIAL NOT NULL,
+  event_type TEXT,
+  status_code INTEGER,
+  reason TEXT,
+  attempt_number INTEGER,
+  timestamp TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+  CONSTRAINT connection_logs_pkey PRIMARY KEY (id)
+) TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS idx_connection_logs_timestamp 
+ON public.connection_logs USING BTREE (timestamp DESC) TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS idx_connection_logs_event_type 
+ON public.connection_logs USING BTREE (event_type) TABLESPACE pg_default;
+```
+
+</details>
+
+### 4. Configure environment variables
+
+<details>
+<summary><b>🔐 Click to see Environment Variables</b></summary>
+
+```env
+# Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-service-role-key
+
+# API Security
+AUTH_KEY=your-secret-api-key
+
+# Telegram Configuration (for media storage)
+TELEGRAM_BOT_TOKEN=your-bot-token-from-botfather
+TELEGRAM_CHAT_ID=your-telegram-chat-id
+
+# Webhook Configuration
+N8N_WEBHOOKS=https://webhook1.com,https://webhook2.com
+
+# Server Configuration
+PORT=5000
+QR_POLL_INTERVAL_MS=3000
+MAX_MEDIA_SIZE=52428800
+
+# Self-Ping Configuration (prevents server sleep on free hosting)
+SELF_PING_ENABLED=true
+SELF_PING_INTERVAL_MS=240000
+SELF_PING_URL=https://your-app.onrender.com/health
+
+# Session Configuration (optional)
+SESSION_ID=default
+
+# Presence Configuration (optional)
+PRESENCE_UPDATE_INTERVAL_MS=30000
+```
+
+**Required Variables:**
+- ✅ `SUPABASE_URL` - Your Supabase project URL
+- ✅ `SUPABASE_KEY` - Your Supabase service role key
+- ✅ `AUTH_KEY` - Secure random string (generate: `openssl rand -hex 32`)
+- ✅ `TELEGRAM_BOT_TOKEN` - Create via [@BotFather](https://t.me/botfather)
+- ✅ `TELEGRAM_CHAT_ID` - Get from [@userinfobot](https://t.me/userinfobot)
+
+</details>
+
+---
 
 ## 🎮 Usage
 
-### Start the server
+### 🚀 Start the server
 
+<table>
+<tr>
+<td width="50%">
+
+**Production Mode**
 ```bash
 npm start
 ```
 
-Or use nodemon for development:
+</td>
+<td width="50%">
+
+**Development Mode**
 ```bash
 npm install -g nodemon
 nodemon wa-api.js
 ```
 
-### Scan QR code
+</td>
+</tr>
+</table>
+
+### 📱 Scan QR code
+
+<div align="center">
 
 1. Visit `http://localhost:5000/qr`
 2. Scan the QR code with WhatsApp mobile app
 3. Page will automatically update when connected
 
-### API Endpoints
+![QR Code Scanning](https://img.shields.io/badge/QR-Scan_Here-25D366?style=for-the-badge&logo=whatsapp)
 
-#### 1. **Health Check**
+</div>
+
+---
+
+## 🌐 API Endpoints
+
+<div align="center">
+
+### 🔌 Available Endpoints
+
+</div>
+
+<details>
+<summary><b>1️⃣ Health Check - GET /health</b></summary>
+
 ```bash
 GET /health
 ```
 
-Response:
+**Response:**
 ```json
 {
   "status": "ok",
@@ -268,20 +516,28 @@ Response:
 }
 ```
 
-#### 2. **Send Message**
+</details>
+
+<details>
+<summary><b>2️⃣ Send Message - POST /send</b></summary>
+
 ```bash
 POST /send
 Headers:
   auth-key: your-secret-api-key
   Content-Type: application/json
+```
 
-Body (text):
+**Send Text:**
+```json
 {
   "jid": "919876543210@s.whatsapp.net",
   "message": "Hello from API!"
 }
+```
 
-Body (with image):
+**Send with Image:**
+```json
 {
   "jid": "919876543210@s.whatsapp.net",
   "message": "Check this out!",
@@ -291,7 +547,7 @@ Body (with image):
 }
 ```
 
-Response:
+**Response:**
 ```json
 {
   "ok": true,
@@ -300,38 +556,39 @@ Response:
 }
 ```
 
-#### 4. **Get Media File**
-```bash
-GET /media/:uniqueId
-Headers:
-  auth-key: your-secret-api-key
-```
+</details>
 
-Example:
+<details>
+<summary><b>3️⃣ Get Media File - GET /media/:uniqueId</b></summary>
+
 ```bash
 GET /media/MEDIA_1234567890_abcdef123456
 Headers:
   auth-key: your-secret-api-key
 ```
 
-Response:
-- Success: Binary file data with appropriate Content-Type header
-- Error: `{ "success": false, "error": "Media not found" }`
+**Response:**
+- ✅ Success: Binary file data with appropriate Content-Type header
+- ❌ Error: `{ "success": false, "error": "Media not found" }`
 
 **How it works:**
-1. When a media message is received, it's uploaded to Telegram
-2. `media_unique_id` and `telegram_file_id` are stored in database
-3. Use this endpoint to retrieve the original file from Telegram
-4. File is downloaded from Telegram and streamed to client
+1. Media received → uploaded to Telegram
+2. `media_unique_id` & `telegram_file_id` stored in database
+3. Retrieve original file from Telegram via this endpoint
 
-#### 5. **Webhook Test**
+</details>
+
+<details>
+<summary><b>4️⃣ Webhook Test - POST /webhook-test</b></summary>
+
 ```bash
 POST /webhook-test
 Headers:
   auth-key: your-secret-api-key
   Content-Type: application/json
+```
 
-Body:
+```json
 {
   "message_id": "test123",
   "jid": "919876543210@s.whatsapp.net",
@@ -344,16 +601,32 @@ Body:
 }
 ```
 
-#### 6. **Clear Session** (force logout)
+</details>
+
+<details>
+<summary><b>5️⃣ Clear Session - POST /clear-session</b></summary>
+
 ```bash
 POST /clear-session
 Headers:
   auth-key: your-secret-api-key
 ```
 
+Force logout and generate new QR code.
+
+</details>
+
+---
+
 ## 📤 Webhook Forwarding
 
-All incoming messages are automatically forwarded to configured webhooks with this payload:
+<div align="center">
+
+### 🔔 Automatic Message Forwarding
+
+</div>
+
+All **incoming messages** are forwarded to configured webhooks:
 
 ```json
 {
@@ -378,56 +651,128 @@ All incoming messages are automatically forwarded to configured webhooks with th
 }
 ```
 
-**Important Notes:**
-- Media files are **NOT** sent as base64 in webhooks (they're stored in Telegram)
-- Use `media_unique_id` to retrieve media via `/media/:uniqueId` endpoint
-- Outgoing messages (sent by you) are **NOT** forwarded to webhooks
-- Only incoming messages are forwarded
+> **📝 Important Notes:**
+> - ✅ Media files are **NOT** sent as base64 (stored in Telegram)
+> - ✅ Use `media_unique_id` to retrieve via `/media/:uniqueId`
+> - ❌ Outgoing messages (sent by you) are **NOT** forwarded
+> - ✅ Only incoming messages are forwarded
 
-### Retry Logic
-- 3 retry attempts per webhook
-- Exponential backoff: 2s, 5s, 10s
-- Errors are logged but don't block message processing
+### 🔄 Retry Logic
+
+<div align="center">
+
+| Attempt | Delay | Action |
+|---------|-------|--------|
+| 1st | 0s | Initial send |
+| 2nd | 2s | First retry |
+| 3rd | 5s | Second retry |
+| 4th | 10s | Final retry |
+
+</div>
+
+---
 
 ## 🔄 Reconnection Strategies
 
-The server handles all WhatsApp disconnect scenarios:
+<div align="center">
 
-| Reason | Strategy |
-|--------|----------|
-| `loggedOut` | Clear session, generate new QR |
-| `badSession` | Clear corrupted session, restart |
-| `connectionClosed` | Reconnect with exponential backoff |
-| `connectionLost` | Reconnect with exponential backoff |
-| `timedOut` | Reconnect with exponential backoff |
-| `restartRequired` | Immediate restart |
+### 🔌 Automatic Reconnection System
 
-**Backoff delays:** 5s, 10s, 15s, 20s, 25s, 30s (max)  
-**Max attempts:** 10 before manual intervention required
+</div>
+
+<table>
+<tr>
+<th>Reason</th>
+<th>Strategy</th>
+<th>Action</th>
+</tr>
+<tr>
+<td>🔴 <code>loggedOut</code></td>
+<td>Clear & Restart</td>
+<td>Generate new QR code</td>
+</tr>
+<tr>
+<td>⚠️ <code>badSession</code></td>
+<td>Clear & Restart</td>
+<td>Remove corrupted session</td>
+</tr>
+<tr>
+<td>🔌 <code>connectionClosed</code></td>
+<td>Exponential Backoff</td>
+<td>Auto-reconnect with delays</td>
+</tr>
+<tr>
+<td>📡 <code>connectionLost</code></td>
+<td>Exponential Backoff</td>
+<td>Auto-reconnect with delays</td>
+</tr>
+<tr>
+<td>⏱️ <code>timedOut</code></td>
+<td>Exponential Backoff</td>
+<td>Auto-reconnect with delays</td>
+</tr>
+<tr>
+<td>🔄 <code>restartRequired</code></td>
+<td>Immediate</td>
+<td>Restart immediately</td>
+</tr>
+</table>
+
+**Backoff Pattern:**  
+`5s → 10s → 15s → 20s → 25s → 30s (max)`
+
+**Max Attempts:** 10 before manual intervention required
+
+---
 
 ## 📊 Message Types Supported
 
-- ✅ Text messages (`conversation`, `extendedTextMessage`)
-- ✅ Images (`imageMessage`)
-- ✅ Videos (`videoMessage`)
-- ✅ Audio (`audioMessage`)
-- ✅ Documents (`documentMessage`)
-- ✅ Stickers (`stickerMessage`)
-- ✅ Reactions (`reactionMessage`)
-- ✅ Replies (context detection)
+<div align="center">
+
+| Type | Icon | Status | Details |
+|------|------|--------|---------|
+| Text | 💬 | ✅ | `conversation`, `extendedTextMessage` |
+| Images | 🖼️ | ✅ | `imageMessage` |
+| Videos | 🎥 | ✅ | `videoMessage` |
+| Audio | 🎵 | ✅ | `audioMessage` |
+| Documents | 📄 | ✅ | `documentMessage` |
+| Stickers | 😊 | ✅ | `stickerMessage` |
+| Reactions | ❤️ | ✅ | `reactionMessage` |
+| Replies | 💭 | ✅ | Context detection |
+
+</div>
+
+---
 
 ## 🔒 Security
 
-- **Rate limiting:** 10 requests/minute per IP on `/send`
-- **Auth header required:** All protected endpoints require `auth-key` header
-- **Input validation:** JID format, file size limits (50MB for media)
-- **No credential exposure:** All secrets in environment variables
-- **Telegram storage:** Media files stored securely in Telegram (not in Supabase)
-- **Unique media IDs:** Prevents duplicate media uploads
+<div align="center">
+
+### 🛡️ Security Features
+
+</div>
+
+| Feature | Implementation | Details |
+|---------|----------------|---------|
+| 🚦 Rate Limiting | 10 req/min | Per IP on `/send` endpoint |
+| 🔐 Authentication | Header Required | `auth-key` for all protected endpoints |
+| ✅ Input Validation | Strict | JID format, file size (50MB max) |
+| 🔒 Credential Protection | Environment Vars | No hardcoded secrets |
+| 📤 Telegram Storage | Secure | Media in Telegram, not Supabase |
+| 🆔 Unique Media IDs | Prevents Duplicates | Crypto-generated identifiers |
+
+---
 
 ## 📈 Monitoring
 
-All connection events are logged to `connection_logs` table:
+<div align="center">
+
+### 📊 Database Queries for Monitoring
+
+</div>
+
+<details>
+<summary><b>📋 Connection Logs</b></summary>
 
 ```sql
 SELECT * FROM connection_logs 
@@ -435,13 +780,17 @@ ORDER BY timestamp DESC
 LIMIT 10;
 ```
 
-View all messages with media info:
+</details>
+
+<details>
+<summary><b>💬 Recent Messages with Media Info</b></summary>
+
 ```sql
 SELECT 
   display_name, 
   type, 
   text, 
-  direction, 
+  direction,
   from_me,
   media_unique_id,
   telegram_file_id,
@@ -451,7 +800,11 @@ ORDER BY created_at DESC
 LIMIT 50;
 ```
 
-View media messages only:
+</details>
+
+<details>
+<summary><b>📎 Media Messages Only</b></summary>
+
 ```sql
 SELECT 
   display_name,
@@ -466,7 +819,11 @@ WHERE media_unique_id IS NOT NULL
 ORDER BY created_at DESC;
 ```
 
-Check auth data (session files):
+</details>
+
+<details>
+<summary><b>🔐 Session Files</b></summary>
+
 ```sql
 SELECT 
   session_id,
@@ -476,193 +833,462 @@ FROM auth_data
 ORDER BY updated_at DESC;
 ```
 
+</details>
+
+---
+
 ## 🧪 Testing
 
-### Manual Acceptance Tests
+<div align="center">
 
-1. **QR Code Flow**
-   - Start server with clean Supabase (no existing session in `auth_data`)
-   - Visit `/qr` and verify QR PNG displays
-   - Scan with WhatsApp and confirm connection
-   - Verify page switches to "Connected" state
-   - Check `auth_data` table for session files (creds.json, app-state-sync-key-*.json)
+### ✅ Manual Acceptance Tests
 
-2. **Incoming Messages**
-   - Send text message to bot
-   - Verify message in `messages` table with `from_me=false` and `direction='inbound'`
-   - Verify webhook received payload (if configured)
-   - Send image with caption
-   - Verify media uploaded to Telegram
-   - Check `media_unique_id`, `telegram_message_id`, and `telegram_file_id` are populated
-   - Verify media can be retrieved via `/media/:uniqueId` endpoint
+</div>
 
-3. **Outgoing Messages**
-   - Call `/send` with text
-   - Verify message delivered on WhatsApp
-   - Verify message stored in `messages` table with `from_me=true` and `direction='outbound'`
-   - Verify webhook does NOT receive this message
-   - Call `/send` with base64 image
-   - Verify image sent and stored in database
+<details>
+<summary><b>1️⃣ QR Code Flow</b></summary>
 
-4. **Reconnection**
-   - Simulate network drop (disable WiFi)
-   - Verify automatic reconnection with backoff
-   - Call `/clear-session`
-   - Verify `auth_data` table is cleared
-   - Verify new QR generated
+- [ ] Start server with clean Supabase (no `auth_data`)
+- [ ] Visit `/qr` and verify QR PNG displays
+- [ ] Scan with WhatsApp and confirm connection
+- [ ] Verify page switches to "Connected" state
+- [ ] Check `auth_data` table for session files
 
-5. **Telegram Media Storage**
-   - Send image/video to bot
-   - Check Telegram bot chat for uploaded media
-   - Verify caption contains metadata (sender, phone, type, size, etc.)
-   - Retrieve media using `/media/:uniqueId` endpoint
-   - Verify media matches original
+</details>
 
-6. **Self-Ping & Presence**
-   - Check logs for "🏓 PING" messages every 4 minutes
-   - Verify bot appears "online" in WhatsApp
-   - Check logs for "👁️ PRESENCE" updates every 30 seconds
+<details>
+<summary><b>2️⃣ Incoming Messages</b></summary>
+
+- [ ] Send text message to bot
+- [ ] Verify in `messages` table (`from_me=false`, `direction='inbound'`)
+- [ ] Verify webhook received payload
+- [ ] Send image with caption
+- [ ] Verify media uploaded to Telegram
+- [ ] Check `media_unique_id`, `telegram_message_id`, `telegram_file_id`
+- [ ] Retrieve media via `/media/:uniqueId`
+
+</details>
+
+<details>
+<summary><b>3️⃣ Outgoing Messages</b></summary>
+
+- [ ] Call `/send` with text
+- [ ] Verify message delivered on WhatsApp
+- [ ] Verify in database (`from_me=true`, `direction='outbound'`)
+- [ ] Verify webhook does NOT receive this message
+- [ ] Send image via `/send`
+- [ ] Verify image sent and stored
+
+</details>
+
+<details>
+<summary><b>4️⃣ Reconnection</b></summary>
+
+- [ ] Simulate network drop
+- [ ] Verify automatic reconnection with backoff
+- [ ] Call `/clear-session`
+- [ ] Verify `auth_data` cleared
+- [ ] Verify new QR generated
+
+</details>
+
+<details>
+<summary><b>5️⃣ Telegram Media Storage</b></summary>
+
+- [ ] Send image/video to bot
+- [ ] Check Telegram bot chat for uploaded media
+- [ ] Verify caption contains metadata
+- [ ] Retrieve via `/media/:uniqueId`
+- [ ] Verify media matches original
+
+</details>
+
+<details>
+<summary><b>6️⃣ Self-Ping & Presence</b></summary>
+
+- [ ] Check logs for "🏓 PING" every 4 minutes
+- [ ] Verify bot appears "online" in WhatsApp
+- [ ] Check logs for "👁️ PRESENCE" every 30 seconds
+
+</details>
+
+---
 
 ## 🐛 Troubleshooting
 
-**Issue:** QR not showing  
-**Solution:** Check console logs, ensure Supabase credentials are correct, verify `auth_data` table exists
+<div align="center">
 
-**Issue:** Messages not forwarding  
-**Solution:** Verify `N8N_WEBHOOKS` is set correctly, check webhook endpoint logs
+### 🔍 Common Issues & Solutions
 
-**Issue:** "Bot not connected" error  
-**Solution:** Visit `/health` to check connection status, rescan QR if needed
+</div>
 
-**Issue:** Session keeps logging out  
-**Solution:** Clear session via `/clear-session`, ensure stable internet connection, check `auth_data` table integrity
+<details>
+<summary><b>❌ QR not showing</b></summary>
 
-**Issue:** Media not uploading to Telegram  
-**Solution:** Verify `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are correct, check Telegram bot is not blocked, ensure bot can send messages to the chat
+**Solution:**
+- Check console logs
+- Verify Supabase credentials
+- Ensure `auth_data` table exists
+- Clear browser cache
 
-**Issue:** Self-ping not working  
-**Solution:** Check `SELF_PING_ENABLED=true` in .env, verify `SELF_PING_URL` is accessible, check logs for ping errors
+</details>
 
-**Issue:** Bot not showing online  
-**Solution:** Check logs for presence updates, verify connection is stable, restart server if needed
+<details>
+<summary><b>❌ Messages not forwarding</b></summary>
 
-**Issue:** Media retrieval fails  
-**Solution:** Check `telegram_file_id` exists in database, verify Telegram bot token is valid, ensure media wasn't deleted from Telegram
+**Solution:**
+- Verify `N8N_WEBHOOKS` in `.env`
+- Check webhook endpoint logs
+- Test with `/webhook-test` endpoint
+- Check firewall/network settings
+
+</details>
+
+<details>
+<summary><b>❌ Bot not connected error</b></summary>
+
+**Solution:**
+- Visit `/health` to check status
+- Rescan QR if needed
+- Check internet connection
+- Restart server
+
+</details>
+
+<details>
+<summary><b>❌ Session keeps logging out</b></summary>
+
+**Solution:**
+- Clear session via `/clear-session`
+- Ensure stable internet
+- Check `auth_data` table integrity
+- Verify Supabase connection
+
+</details>
+
+<details>
+<summary><b>❌ Media not uploading to Telegram</b></summary>
+
+**Solution:**
+- Verify `TELEGRAM_BOT_TOKEN` correct
+- Verify `TELEGRAM_CHAT_ID` correct
+- Check bot not blocked
+- Ensure bot can send to chat
+
+</details>
+
+<details>
+<summary><b>❌ Self-ping not working</b></summary>
+
+**Solution:**
+- Set `SELF_PING_ENABLED=true`
+- Verify `SELF_PING_URL` accessible
+- Check logs for ping errors
+- Test URL manually
+
+</details>
+
+<details>
+<summary><b>❌ Bot not showing online</b></summary>
+
+**Solution:**
+- Check logs for presence updates
+- Verify connection stable
+- Restart server
+- Check `PRESENCE_UPDATE_INTERVAL_MS`
+
+</details>
+
+<details>
+<summary><b>❌ Media retrieval fails</b></summary>
+
+**Solution:**
+- Check `telegram_file_id` in database
+- Verify Telegram bot token valid
+- Ensure media not deleted from Telegram
+- Check file size limits
+
+</details>
+
+---
 
 ## 🎯 Key Differences from Standard Setup
 
-### 1. **Media Storage Strategy**
-- **Old:** Base64 in Supabase (large database, slow queries)
-- **New:** Telegram bot storage (unlimited, fast, free)
+<div align="center">
 
-### 2. **Session Management**
-- **Old:** `sessions` table with JSONB
-- **New:** `auth_data` table with individual files (more reliable)
+### 💡 What Makes This Special
 
-### 3. **Message Tracking**
-- **Old:** Only incoming messages
-- **New:** Both incoming AND outgoing messages (complete history)
+</div>
 
-### 4. **Webhook Behavior**
-- **Old:** All messages forwarded
-- **New:** Only incoming messages forwarded (prevents loops)
+<table>
+<tr>
+<th>Feature</th>
+<th>Standard Setup</th>
+<th>This Project ⭐</th>
+</tr>
+<tr>
+<td><b>Media Storage</b></td>
+<td>Base64 in Supabase<br/>💾 Large DB<br/>🐌 Slow queries</td>
+<td>Telegram Bot<br/>☁️ Unlimited<br/>⚡ Fast & Free</td>
+</tr>
+<tr>
+<td><b>Session Management</b></td>
+<td><code>sessions</code> table with JSONB</td>
+<td><code>auth_data</code> table<br/>📁 Individual files<br/>🔒 More reliable</td>
+</tr>
+<tr>
+<td><b>Message Tracking</b></td>
+<td>Only incoming messages</td>
+<td>Both incoming & outgoing<br/>📊 Complete history</td>
+</tr>
+<tr>
+<td><b>Webhook Behavior</b></td>
+<td>All messages forwarded</td>
+<td>Only incoming<br/>🚫 Prevents loops</td>
+</tr>
+<tr>
+<td><b>Uptime Management</b></td>
+<td>Manual monitoring</td>
+<td>Self-ping mechanism<br/>🏓 Free hosting friendly</td>
+</tr>
+<tr>
+<td><b>Online Presence</b></td>
+<td>Default behavior</td>
+<td>Always online updates<br/>👁️ 24/7 visibility</td>
+</tr>
+<tr>
+<td><b>Read Receipts</b></td>
+<td>Optional</td>
+<td>Always enabled<br/>✅ Blue ticks for all</td>
+</tr>
+</table>
 
-### 5. **Uptime Management**
-- **New:** Self-ping mechanism for free hosting platforms (Render, Railway, etc.)
-- **New:** Always online presence updates
-
-### 6. **Read Receipts**
-- **New:** Blue ticks enabled for all messages automatically
+---
 
 ## 🚀 Deployment Tips
 
-### Render.com
+<div align="center">
+
+### 🌐 Deploy to Popular Platforms
+
+</div>
+
+<details>
+<summary><b>🟢 Render.com</b></summary>
+
 1. Set `SELF_PING_ENABLED=true`
 2. Set `SELF_PING_URL=https://your-app.onrender.com/health`
-3. Free tier sleeps after 15 minutes - self-ping keeps it alive
+3. Free tier sleeps after 15 min - self-ping keeps alive
+4. Auto-deploy from GitHub
+5. Environment variables in dashboard
 
-### Railway.app
+</details>
+
+<details>
+<summary><b>🚂 Railway.app</b></summary>
+
 1. Same as Render
-2. Set `PORT` environment variable (Railway provides it automatically)
+2. Set `PORT` env (Railway auto-provides)
+3. Fast deployments
+4. Built-in metrics
 
-### Heroku
+</details>
+
+<details>
+<summary><b>🟣 Heroku</b></summary>
+
 1. Enable self-ping
-2. Use hobby dyno to avoid sleep (free dyno deprecated)
+2. Use hobby dyno (free deprecated)
+3. Add Procfile: `web: node wa-api.js`
+4. Set environment variables
 
-### VPS (DigitalOcean, AWS, etc.)
-1. Can disable self-ping (`SELF_PING_ENABLED=false`)
-2. Set up PM2 for process management:
-   ```bash
-   npm install -g pm2
-   pm2 start wa-api.js --name whatsapp-api
-   pm2 startup
-   pm2 save
-   ```
+</details>
+
+<details>
+<summary><b>🖥️ VPS (DigitalOcean, AWS, etc.)</b></summary>
+
+1. Can disable self-ping: `SELF_PING_ENABLED=false`
+2. Set up PM2:
+
+```bash
+npm install -g pm2
+pm2 start wa-api.js --name whatsapp-api
+pm2 startup
+pm2 save
+pm2 logs whatsapp-api
+```
+
+3. Use nginx as reverse proxy
+4. Set up SSL with Let's Encrypt
+
+</details>
+
+---
 
 ## 📊 Database Schema Summary
 
-### `auth_data` Table
-- Stores WhatsApp session authentication files
-- Each file (creds.json, keys) stored as separate row
-- Automatically updated on credential changes
+<div align="center">
 
-### `messages` Table
-- Stores all incoming and outgoing messages
-- Media references stored (not actual files)
-- Telegram integration for media retrieval
-- Supports replies, reactions, and all message types
+### 🗄️ Tables Overview
 
-### `connection_logs` Table
-- Monitors connection events and reconnection attempts
-- Useful for debugging connection issues
-- Tracks event types, status codes, and timestamps
+</div>
+
+<table>
+<tr>
+<td width="33%" align="center">
+
+### 🔐 `auth_data`
+
+WhatsApp session files
+
+**Columns:**
+- `session_id`
+- `file_name`
+- `file_data`
+- `updated_at`
+
+**Purpose:**
+Stores authentication state<br/>
+No local files needed
+
+</td>
+<td width="33%" align="center">
+
+### 💬 `messages`
+
+All messages (in & out)
+
+**Key Columns:**
+- `media_unique_id`
+- `telegram_file_id`
+- `from_me`
+- `direction`
+
+**Purpose:**
+Complete message history<br/>
+Media references
+
+</td>
+<td width="33%" align="center">
+
+### 📊 `connection_logs`
+
+Connection events
+
+**Columns:**
+- `event_type`
+- `status_code`
+- `reason`
+- `timestamp`
+
+**Purpose:**
+Debugging reconnections<br/>
+Monitor stability
+
+</td>
+</tr>
+</table>
+
+---
 
 ## 🎨 Features Summary
 
+<div align="center">
+
 ### ✅ What This Bot Does
-- **Receives ALL incoming messages** (text, media, reactions, replies)
-- **Stores ALL outgoing messages** (messages you send)
-- **Forwards incoming messages to webhooks** (not outgoing)
-- **Uploads media to Telegram** (unlimited free storage)
-- **Always appears online** (presence updates every 30s)
-- **Sends blue ticks** (read receipts for all messages)
-- **Auto-reconnects** on disconnection (smart backoff)
-- **Self-pings** to prevent sleep on free hosting
-- **Web-based QR scanning** (no terminal required)
-- **Complete message history** (both directions in database)
+
+</div>
+
+<table>
+<tr>
+<td width="50%">
+
+**Receives & Stores:**
+- ✅ ALL incoming messages
+- ✅ Text, media, reactions, replies
+- ✅ Media uploaded to Telegram
+- ✅ Complete metadata tracking
+
+</td>
+<td width="50%">
+
+**Sends & Forwards:**
+- ✅ ALL outgoing messages stored
+- ✅ Forwards incoming to webhooks
+- ✅ NOT outgoing (prevents loops)
+- ✅ Blue ticks (read receipts)
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**Always Active:**
+- ✅ Appears online 24/7
+- ✅ Self-ping (no sleep)
+- ✅ Auto-reconnect (smart backoff)
+- ✅ Web-based QR scanning
+
+</td>
+<td width="50%">
+
+**Cloud Storage:**
+- ✅ No local files
+- ✅ Supabase for data
+- ✅ Telegram for media
+- ✅ Environment variables
+
+</td>
+</tr>
+</table>
+
+<div align="center">
 
 ### ❌ What This Bot Does NOT Do
-- Does NOT forward your outgoing messages to webhooks (prevents loops)
-- Does NOT store media files in Supabase (uses Telegram instead)
-- Does NOT require local file storage (everything in cloud)
-- Does NOT expose credentials (all in environment variables)
+
+</div>
+
+| Does NOT | Reason |
+|----------|--------|
+| ❌ Forward outgoing messages to webhooks | Prevents loops |
+| ❌ Store media in Supabase | Uses Telegram (unlimited) |
+| ❌ Require local file storage | Everything in cloud |
+| ❌ Expose credentials | All in `.env` |
+
+---
 
 ## 📞 Getting Help
 
-### Debug Checklist
-1. ✅ Check `/health` endpoint - is bot connected?
-2. ✅ View console logs - colorful emojified output
-3. ✅ Check Supabase tables - are messages being stored?
-4. ✅ Verify Telegram - are media files uploading?
-5. ✅ Test webhooks - are they receiving payloads?
+<div align="center">
 
-### Common Log Messages
-- `🚀 CONNECT` - Bot connected successfully
-- `🔌 DISCONN` - Bot disconnected (will auto-reconnect)
-- `💬 MESSAGE` - Message received/sent
-- `📤 TELEGRAM` - Media uploaded to Telegram
-- `🔔 WEBHOOK` - Message forwarded to webhook
-- `💾 DATABASE` - Data saved to Supabase
-- `🏓 PING` - Self-ping executed
-- `👁️ PRESENCE` - Online status updated
+### 🆘 Debug Checklist
 
-## 📝 License
+</div>
 
-MIT
+- [ ] 1. Check `/health` endpoint - is bot connected?
+- [ ] 2. View console logs - colorful emojified output
+- [ ] 3. Check Supabase tables - are messages stored?
+- [ ] 4. Verify Telegram - are media files uploading?
+- [ ] 5. Test webhooks - are they receiving payloads?
 
-## 🤝 Support
+### 📋 Common Log Messages
 
-For issues and questions, check the console logs first. All operations are logged with timestamps and severity levels.
+<div align="center">
+
+| Icon | Message | Meaning |
+|------|---------|---------|
+| 🚀 | `CONNECT` | Bot connected successfully |
+| 🔌 | `DISCONN` | Bot disconnected (auto-reconnect) |
+| 💬 | `MESSAGE` | Message received/sent |
+| 📤 | `TELEGRAM` | Media uploaded to Telegram |
+| 🔔 | `WEBHOOK` | Message forwarded to webhook |
+| 💾 | `DATABASE` | Data saved to Supabase |
+| 🏓 | `PING` | Self-ping executed |
+| 👁️ | `PRESENCE` | Online status updated |
+
+</div>
+
+---
 
 ## 🏗️ Architecture Overview
 
@@ -690,7 +1316,7 @@ For issues and questions, check the console logs first. All operations are logge
 └───────────────────┴──────────────────┴─────────────────────┘
 ```
 
-### Data Flow
+### 📊 Data Flow
 
 **Incoming Message:**
 1. WhatsApp → Baileys → Message Handler
@@ -712,4 +1338,58 @@ For issues and questions, check the console logs first. All operations are logge
 
 ---
 
-**Made with ❤️ using Baileys, Supabase, and Telegram**
+<div align="center">
+
+## 📜 License
+
+MIT License - feel free to use and modify!
+
+---
+
+## 🤝 Support
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+### 📚 Documentation
+Check this README first<br/>
+All features documented
+
+</td>
+<td align="center" width="33%">
+
+### 🐛 Issues
+Found a bug?<br/>
+Open an issue on GitHub
+
+</td>
+<td align="center" width="33%">
+
+### 💡 Improvements
+Have an idea?<br/>
+PRs welcome!
+
+</td>
+</tr>
+</table>
+
+---
+
+<div align="center">
+
+### ⭐ If you found this helpful, give it a star!
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&duration=2000&pause=1000&color=25D366&center=true&vCenter=true&width=600&lines=Made+with+%E2%9D%A4%EF%B8%8F+using+Baileys%2C+Supabase%2C+and+Telegram;Happy+Coding!+%F0%9F%9A%80" alt="Typing SVG" />
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F-red?style=for-the-badge" alt="Made with love" />
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" />
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
+</p>
+
+</div>
+
+</div>
