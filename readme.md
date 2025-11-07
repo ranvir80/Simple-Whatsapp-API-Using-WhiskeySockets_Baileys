@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=35&duration=2800&pause=2000&color=25D366&center=true&vCenter=true&width=940&lines=WhatsApp+API+Server+%F0%9F%9A%80;Enhanced+%7C+Powerful+%7C+Production+Ready;Telegram+Media+%7C+Auto+Reconnect+%7C+Always+Online" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=35&duration=2800&pause=2000&color=25D366&center=true&vCenter=true&width=1100&lines=WhatsApp%20API%20Server%20%F0%9F%9A%80;Enhanced%20%7C%20Powerful%20%7C%20Production%20Ready;Telegram%20Media%20%7C%20Auto%20Reconnect%20%7C%20Always%20Online" alt="Typing SVG" />
 
 <p align="center">
   <img src="https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" />
@@ -32,6 +32,7 @@
 ```bash
 # 🚀 Get Started in 60 Seconds!
 ```
+<div align="center">
 
 </div>
 
