@@ -1,15 +1,15 @@
 /**
  * ============================================
- * 🚀 WhatsApp API Server - Enhanced Version
+ * 🚀 WhatsApp API Server - FIXED VERSION
  * ============================================
  * 
- * NEW FEATURES:
- * ✅ Self-ping to prevent sleep
- * ✅ Forward ALL incoming messages (no skips)
- * ✅ Store ALL outgoing messages (own messages)
- * ✅ Blue tick (read receipts) for ALL messages
- * ✅ Always show online status
- * ✅ Telegram media storage
+ * FIXES APPLIED:
+ * ✅ Message unwrapping for ephemeral/viewOnce
+ * ✅ Proper logging enabled (not silent)
+ * ✅ Enhanced debug output
+ * ✅ Fixed message extraction
+ * ✅ Fixed media download
+ * ✅ Better error handling
  * 
  * ============================================
  */
@@ -58,13 +58,16 @@ const CONFIG = {
   webhookRetries: 3,
   webhookRetryDelays: [2000, 5000, 10000],
   
-  // NEW: Self-ping configuration
-  selfPingEnabled: process.env.SELF_PING_ENABLED !== 'false', // Default: true
-  selfPingInterval: parseInt(process.env.SELF_PING_INTERVAL_MS || '240000'), // 4 minutes default
-  selfPingUrl: process.env.SELF_PING_URL || null, // Auto-detect if not set
+  // Self-ping configuration
+  selfPingEnabled: process.env.SELF_PING_ENABLED !== 'false',
+  selfPingInterval: parseInt(process.env.SELF_PING_INTERVAL_MS || '240000'), // 4 minutes
+  selfPingUrl: process.env.SELF_PING_URL || null,
   
-  // NEW: Online presence configuration
+  // Online presence configuration
   presenceUpdateInterval: parseInt(process.env.PRESENCE_UPDATE_INTERVAL_MS || '30000'), // 30 seconds
+  
+  // Debug mode
+  debugMode: process.env.DEBUG_MODE === 'true',
 };
 
 // Validate required config
@@ -94,8 +97,8 @@ const STATE = {
   messageQueue: [],
   processingQueue: false,
   lastSuccessfulConnection: null,
-  selfPingInterval: null, // NEW
-  presenceInterval: null, // NEW
+  selfPingInterval: null,
+  presenceInterval: null,
 };
 
 // ============================================
@@ -118,8 +121,9 @@ const logger = {
   disconnect: (msg) => console.log(`${getTime()} ${chalk.red('🔌 DISCONN')} ${msg}`),
   message: (msg) => console.log(`${getTime()} ${chalk.cyan('💬 MESSAGE')} ${msg}`),
   telegram: (msg) => console.log(`${getTime()} ${chalk.blueBright('📤 TELEGRAM')} ${msg}`),
-  ping: (msg) => console.log(`${getTime()} ${chalk.magenta('🏓 PING')}    ${msg}`), // NEW
-  presence: (msg) => console.log(`${getTime()} ${chalk.green('👁️  PRESENCE')} ${msg}`), // NEW
+  ping: (msg) => console.log(`${getTime()} ${chalk.magenta('🏓 PING')}    ${msg}`),
+  presence: (msg) => console.log(`${getTime()} ${chalk.green('👁️  PRESENCE')} ${msg}`),
+  debug: (msg) => CONFIG.debugMode && console.log(`${getTime()} ${chalk.gray('🐛 DEBUG')}   ${msg}`),
   line: () => console.log(chalk.gray('━'.repeat(80))),
   banner: (msg) => {
     console.log(chalk.gray('━'.repeat(80)));
@@ -270,7 +274,59 @@ const queueWrite = async (key, writeFunction) => {
 };
 
 // ============================================
-// NEW: SELF-PING MECHANISM
+// FIX: MESSAGE UNWRAPPING
+// ============================================
+const unwrapMessage = (message) => {
+  if (!message) return null;
+  
+  // Handle different message wrappers
+  if (message.ephemeralMessage?.message) {
+    logger.debug('Unwrapping ephemeralMessage');
+    return unwrapMessage(message.ephemeralMessage.message);
+  }
+  
+  if (message.viewOnceMessage?.message) {
+    logger.debug('Unwrapping viewOnceMessage');
+    return unwrapMessage(message.viewOnceMessage.message);
+  }
+  
+  if (message.viewOnceMessageV2?.message) {
+    logger.debug('Unwrapping viewOnceMessageV2');
+    return unwrapMessage(message.viewOnceMessageV2.message);
+  }
+  
+  if (message.viewOnceMessageV2Extension?.message) {
+    logger.debug('Unwrapping viewOnceMessageV2Extension');
+    return unwrapMessage(message.viewOnceMessageV2Extension.message);
+  }
+  
+  if (message.documentWithCaptionMessage?.message) {
+    logger.debug('Unwrapping documentWithCaptionMessage');
+    return unwrapMessage(message.documentWithCaptionMessage.message);
+  }
+  
+  if (message.templateMessage?.hydratedTemplate) {
+    logger.debug('Unwrapping templateMessage');
+    return unwrapMessage(message.templateMessage.hydratedTemplate);
+  }
+  
+  if (message.templateButtonReplyMessage) {
+    logger.debug('Unwrapping templateButtonReplyMessage');
+    return {
+      conversation: message.templateButtonReplyMessage.selectedDisplayText || 'Button clicked'
+    };
+  }
+  
+  if (message.messageContextInfo) {
+    logger.debug('Removing messageContextInfo wrapper');
+    delete message.messageContextInfo;
+  }
+  
+  return message;
+};
+
+// ============================================
+// SELF-PING MECHANISM
 // ============================================
 const startSelfPing = () => {
   if (!CONFIG.selfPingEnabled) {
@@ -278,7 +334,6 @@ const startSelfPing = () => {
     return;
   }
 
-  // Auto-detect URL if not provided
   const pingUrl = CONFIG.selfPingUrl || `http://localhost:${CONFIG.port}/health`;
   
   logger.success(`🏓 Self-ping enabled: ${chalk.yellow(pingUrl)} every ${chalk.cyan(CONFIG.selfPingInterval / 1000)}s`);
@@ -302,7 +357,7 @@ const stopSelfPing = () => {
 };
 
 // ============================================
-// NEW: ALWAYS ONLINE PRESENCE
+// ALWAYS ONLINE PRESENCE
 // ============================================
 const startPresenceUpdates = () => {
   if (!STATE.sock || !STATE.isConnected) {
@@ -312,10 +367,8 @@ const startPresenceUpdates = () => {
 
   logger.success(`👁️  Online presence enabled - updating every ${chalk.cyan(CONFIG.presenceUpdateInterval / 1000)}s`);
   
-  // Send initial presence
   updatePresence();
   
-  // Set interval for updates
   STATE.presenceInterval = setInterval(() => {
     updatePresence();
   }, CONFIG.presenceUpdateInterval);
@@ -362,7 +415,7 @@ const sendMediaToTelegram = async (mediaBuffer, metadata) => {
       isReply,
       replyToMessageId,
       replyToText,
-      fromMe // NEW
+      fromMe
     } = metadata;
 
     logger.telegram(`Uploading ${filename} (${(size / 1024).toFixed(2)} KB) to Telegram...`);
@@ -376,7 +429,7 @@ const sendMediaToTelegram = async (mediaBuffer, metadata) => {
     caption += `📝 **Type:** ${messageType}\n`;
     caption += `📏 **Size:** ${(size / 1024).toFixed(2)} KB\n`;
     caption += `🕐 **Received:** ${new Date(timestamp).toLocaleString()}\n`;
-    caption += `📍 **Direction:** ${fromMe ? 'Outbound (Sent)' : 'Inbound (Received)'}\n`; // NEW
+    caption += `📍 **Direction:** ${fromMe ? 'Outbound (Sent)' : 'Inbound (Received)'}\n`;
     
     if (isReply) {
       caption += `\n↩️ **Reply to:** ${replyToMessageId}\n`;
@@ -499,80 +552,80 @@ const useSupabaseAuthState = async () => {
             throw new Error('Invalid data structure');
           }
         
-        const jsonData = JSON.stringify(data, BufferJSON.replacer);
+          const jsonData = JSON.stringify(data, BufferJSON.replacer);
         
-        if (!jsonData || jsonData === 'null' || jsonData === '{}') {
-          throw new Error('Serialization produced invalid data');
-        }
+          if (!jsonData || jsonData === 'null' || jsonData === '{}') {
+            throw new Error('Serialization produced invalid data');
+          }
         
-        try {
-          JSON.parse(jsonData, BufferJSON.reviver);
-        } catch (parseErr) {
-          throw new Error(`Data validation failed: ${parseErr.message}`);
-        }
+          try {
+            JSON.parse(jsonData, BufferJSON.reviver);
+          } catch (parseErr) {
+            throw new Error(`Data validation failed: ${parseErr.message}`);
+          }
         
-        const fileName = fixFileName(file);
-        const backupName = `${fileName}.backup`;
+          const fileName = fixFileName(file);
+          const backupName = `${fileName}.backup`;
         
-        const { data: existing } = await supabase.query('auth_data', 'GET', {
-          select: 'file_data',
-          eq: { session_id: CONFIG.sessionId, file_name: fileName },
-          single: true
-        });
-        
-        if (existing?.file_data) {
-          await supabase.upsert('auth_data', {
-            session_id: CONFIG.sessionId,
-            file_name: backupName,
-            file_data: existing.file_data,
-            updated_at: new Date().toISOString()
+          const { data: existing } = await supabase.query('auth_data', 'GET', {
+            select: 'file_data',
+            eq: { session_id: CONFIG.sessionId, file_name: fileName },
+            single: true
           });
-        }
         
-        const payload = {
-          session_id: CONFIG.sessionId,
-          file_name: fileName,
-          file_data: jsonData,
-          updated_at: new Date().toISOString()
-        };
+          if (existing?.file_data) {
+            await supabase.upsert('auth_data', {
+              session_id: CONFIG.sessionId,
+              file_name: backupName,
+              file_data: existing.file_data,
+              updated_at: new Date().toISOString()
+            });
+          }
+        
+          const payload = {
+            session_id: CONFIG.sessionId,
+            file_name: fileName,
+            file_data: jsonData,
+            updated_at: new Date().toISOString()
+          };
 
-        const { error } = await supabase.upsert('auth_data', payload);
-        if (error) throw new Error(error.message);
+          const { error } = await supabase.upsert('auth_data', payload);
+          if (error) throw new Error(error.message);
         
-        const { data: verified } = await supabase.query('auth_data', 'GET', {
-          select: 'file_data',
-          eq: { session_id: CONFIG.sessionId, file_name: fileName },
-          single: true
-        });
+          const { data: verified } = await supabase.query('auth_data', 'GET', {
+            select: 'file_data',
+            eq: { session_id: CONFIG.sessionId, file_name: fileName },
+            single: true
+          });
         
-        if (!verified?.file_data) {
-          throw new Error('Write verification failed - data not found');
+          if (!verified?.file_data) {
+            throw new Error('Write verification failed - data not found');
+          }
+        
+          try {
+            JSON.parse(verified.file_data, BufferJSON.reviver);
+          } catch {
+            throw new Error('Write verification failed - data corrupted');
+          }
+        
+          if (file === 'creds.json') {
+            logger.db(`✓ Credentials saved to Supabase ${chalk.gray('(atomic)')}`);
+          }
+        
+          return true;
+        } catch (err) {
+          logger.warn(`Write attempt ${attempt}/${maxRetries} failed for ${file}: ${err.message}`);
+        
+          if (attempt >= maxRetries) {
+            logger.error(`Failed to write ${file} after ${maxRetries} attempts`);
+            return false;
+          }
+        
+          await new Promise(resolve => setTimeout(resolve, attempt * 1000));
         }
-        
-        try {
-          JSON.parse(verified.file_data, BufferJSON.reviver);
-        } catch {
-          throw new Error('Write verification failed - data corrupted');
-        }
-        
-        if (file === 'creds.json') {
-          logger.db(`✓ Credentials saved to Supabase ${chalk.gray('(atomic)')}`);
-        }
-        
-        return true;
-      } catch (err) {
-        logger.warn(`Write attempt ${attempt}/${maxRetries} failed for ${file}: ${err.message}`);
-        
-        if (attempt >= maxRetries) {
-          logger.error(`Failed to write ${file} after ${maxRetries} attempts`);
-          return false;
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
       }
-    }
     
-    return false;
+      return false;
     });
   };
 
@@ -776,11 +829,23 @@ const saveMessageToSupabase = async (messageData) => {
 };
 
 // ============================================
-// MEDIA HANDLING - UPDATED FOR TELEGRAM
+// FIX: MEDIA HANDLING
 // ============================================
 const downloadAndSendToTelegram = async (msg, messageType, metadata) => {
   try {
-    const messageContent = msg.message[messageType];
+    // FIXED: Unwrap message before accessing content
+    const unwrapped = unwrapMessage(msg.message);
+    if (!unwrapped) {
+      logger.warn('Could not unwrap message for media download');
+      return null;
+    }
+
+    const messageContent = unwrapped[messageType];
+    if (!messageContent) {
+      logger.warn(`No content found for type: ${messageType}`);
+      return null;
+    }
+
     const fileSize = parseInt(messageContent?.fileLength || 0);
     
     if (fileSize > CONFIG.maxMediaSize) {
@@ -795,7 +860,10 @@ const downloadAndSendToTelegram = async (msg, messageType, metadata) => {
       reuploadRequest: STATE.sock?.updateMediaMessage
     });
 
-    if (!buffer || buffer.length === 0) return null;
+    if (!buffer || buffer.length === 0) {
+      logger.warn('Downloaded buffer is empty');
+      return null;
+    }
 
     const mimetype = messageContent?.mimetype || 'application/octet-stream';
     let ext = mimetype.includes('/') ? mimetype.split('/')[1].split(';')[0] : 'bin';
@@ -826,19 +894,33 @@ const downloadAndSendToTelegram = async (msg, messageType, metadata) => {
     };
   } catch (err) {
     logger.error(`Media download/upload error: ${err.message}`);
+    logger.debug(`Stack: ${err.stack}`);
     return null;
   }
 };
 
 // ============================================
-// MESSAGE EXTRACTION - UPDATED
+// FIX: MESSAGE EXTRACTION
 // ============================================
 const extractMessageData = async (msg) => {
   try {
-    const messageType = getContentType(msg.message);
-    if (!messageType) return null;
+    // STEP 1: Unwrap the message to get actual content
+    const unwrapped = unwrapMessage(msg.message);
+    if (!unwrapped) {
+      logger.debug('Message unwrapping returned null');
+      return null;
+    }
 
-    const messageContent = msg.message[messageType];
+    // STEP 2: Get the type from the unwrapped content
+    const messageType = getContentType(unwrapped);
+    if (!messageType) {
+      logger.debug('Could not determine message type after unwrapping');
+      return null;
+    }
+
+    logger.debug(`Processing message type: ${messageType}`);
+
+    const messageContent = unwrapped[messageType];
     
     let data = {
       text: null,
@@ -854,15 +936,19 @@ const extractMessageData = async (msg) => {
       reply_to_text: null
     };
 
-    // Check for reply
-    if (messageContent?.contextInfo?.stanzaId || messageContent?.contextInfo?.quotedMessage) {
+    // Check for reply (Context Info is usually inside the specific message type)
+    const contextInfo = messageContent?.contextInfo;
+    if (contextInfo?.stanzaId || contextInfo?.quotedMessage) {
       data.is_reply = true;
-      data.reply_to_message_id = messageContent.contextInfo.stanzaId || null;
+      data.reply_to_message_id = contextInfo.stanzaId || null;
       
-      if (messageContent.contextInfo.quotedMessage) {
-        const quotedType = getContentType(messageContent.contextInfo.quotedMessage);
-        const quotedContent = messageContent.contextInfo.quotedMessage[quotedType];
-        data.reply_to_text = quotedContent?.text || quotedContent?.caption || JSON.stringify(quotedContent).substring(0, 100);
+      if (contextInfo.quotedMessage) {
+        const unwrappedQuoted = unwrapMessage(contextInfo.quotedMessage);
+        const quotedType = getContentType(unwrappedQuoted);
+        if (quotedType) {
+          const quotedContent = unwrappedQuoted[quotedType];
+          data.reply_to_text = quotedContent?.text || quotedContent?.caption || '[Media/Other]';
+        }
       }
     }
 
@@ -871,7 +957,7 @@ const extractMessageData = async (msg) => {
     const senderPhone = extractPlainPhone(senderJid);
     const senderName = msg.pushName || senderPhone || 'Unknown';
     const timestamp = new Date((msg.messageTimestamp || Date.now()) * 1000).toISOString();
-    const fromMe = msg.key.fromMe || false; // NEW
+    const fromMe = msg.key.fromMe || false;
 
     // Process by type
     switch (messageType) {
@@ -899,7 +985,7 @@ const extractMessageData = async (msg) => {
           isReply: data.is_reply,
           replyToMessageId: data.reply_to_message_id,
           replyToText: data.reply_to_text,
-          fromMe // NEW
+          fromMe
         });
         
         if (mediaResult) {
@@ -917,19 +1003,29 @@ const extractMessageData = async (msg) => {
         data.text = messageContent.text ? `Reacted ${messageContent.text}` : 'Removed reaction';
         break;
 
+      case 'listResponseMessage':
+        data.text = messageContent.singleSelectReply?.selectedRowId || '[List Response]';
+        break;
+
+      case 'buttonsResponseMessage':
+        data.text = messageContent.selectedButtonId || '[Button Response]';
+        break;
+
       default:
         data.text = `[${messageType}]`;
+        logger.debug(`Unhandled message type: ${messageType}`);
     }
 
     return data;
   } catch (err) {
     logger.error(`Extract error: ${err.message}`);
+    logger.debug(`Stack: ${err.stack}`);
     return null;
   }
 };
 
 // ============================================
-// WEBHOOK FORWARDING - UPDATED
+// WEBHOOK FORWARDING
 // ============================================
 const forwardToWebhooks = async (payload) => {
   if (CONFIG.n8nWebhooks.length === 0) {
@@ -947,7 +1043,7 @@ const forwardToWebhooks = async (payload) => {
         const response = await axios.post(webhookUrl, payload, {
           headers: { 
             'Content-Type': 'application/json',
-            'User-Agent': 'WhatsApp-Bot/2.0-Enhanced'
+            'User-Agent': 'WhatsApp-Bot/2.0-Fixed'
           },
           timeout: 30000
         });
@@ -1051,7 +1147,7 @@ const sendMessage = async (jid, message, file = null, filename = null, mimetype 
     
     logger.success(`Sent to ${extractPlainPhone(jid) || jid}`);
     
-    // NEW: Store outgoing message with all details
+    // Store outgoing message with all details
     const messageData = {
       message_id: sentMsg.key.id,
       jid,
@@ -1059,7 +1155,7 @@ const sendMessage = async (jid, message, file = null, filename = null, mimetype 
       display_name: 'Me (Bot)',
       type: file ? (mimetype.split('/')[0] + 'Message') : 'conversation',
       text: message || (file ? '[Media]' : null),
-      media_unique_id: null, // Not storing outbound media to Telegram
+      media_unique_id: null,
       telegram_message_id: null,
       telegram_file_id: null,
       media_mimetype: mimetype || null,
@@ -1078,7 +1174,6 @@ const sendMessage = async (jid, message, file = null, filename = null, mimetype 
     };
     
     await saveMessageToSupabase(messageData);
-    // NOTE: Not forwarding to webhooks as per requirement
     
     return sentMsg;
   } catch (err) {
@@ -1101,18 +1196,38 @@ const sendMessageQueued = (jid, message, file, filename, mimetype) => {
 };
 
 // ============================================
-// INCOMING MESSAGE HANDLER - ENHANCED
+// FIX: INCOMING MESSAGE HANDLER
 // ============================================
 const handleIncomingMessage = async (messages) => {
+  // DEBUG: Log raw message received
+  if (CONFIG.debugMode) {
+    logger.debug(`RAW MESSAGES COUNT: ${messages.length}`);
+    messages.forEach((m, i) => {
+      logger.debug(`Message ${i}: ${JSON.stringify({
+        key: m.key,
+        messageType: getContentType(m.message),
+        fromMe: m.key.fromMe
+      })}`);
+    });
+  }
+
   for (const msg of messages) {
     try {
-      if (!msg?.key || !msg?.message) continue;
+      if (!msg?.key || !msg?.message) {
+        logger.debug('Skipping: No key or message');
+        continue;
+      }
 
-      const messageType = getContentType(msg.message);
-      if (!messageType) continue;
+      // IMPORTANT: Check the raw message type BEFORE unwrapping
+      const rawMessageType = getContentType(msg.message);
+      logger.debug(`Raw message type before unwrap: ${rawMessageType}`);
 
-      const ignoredTypes = ['senderKeyDistributionMessage', 'protocolMessage', 'messageContextInfo'];
-      if (ignoredTypes.includes(messageType)) continue;
+      // Ignore system messages but be less restrictive
+      const ignoredTypes = ['protocolMessage', 'senderKeyDistributionMessage'];
+      if (ignoredTypes.includes(rawMessageType)) {
+        logger.debug(`Ignoring system message type: ${rawMessageType}`);
+        continue;
+      }
 
       const jid = msg.key.remoteJid;
       const plainPhone = extractPlainPhone(jid);
@@ -1121,17 +1236,20 @@ const handleIncomingMessage = async (messages) => {
       const timestamp = new Date((msg.messageTimestamp || Date.now()) * 1000).toISOString();
       const fromMe = msg.key.fromMe || false;
 
-      logger.message(`${chalk.cyan(messageType)} from ${fromMe ? chalk.green('ME') : chalk.yellow(displayName)} ${chalk.gray(`(${plainPhone})`)}`);
+      logger.message(`${chalk.cyan(rawMessageType)} from ${fromMe ? chalk.green('ME') : chalk.yellow(displayName)} ${chalk.gray(`(${plainPhone})`)}`);
 
       const extractedData = await extractMessageData(msg);
-      if (!extractedData) continue;
+      if (!extractedData) {
+        logger.warn(`Could not extract data from message ${messageId}`);
+        continue;
+      }
 
       const messageData = {
         message_id: messageId,
         jid,
         from_plain_phone: plainPhone,
         display_name: fromMe ? 'Me' : displayName,
-        type: messageType,
+        type: rawMessageType,
         ...extractedData,
         chat_type: isPersonalChat(jid) ? 'personal' : 'group',
         from_me: fromMe,
@@ -1141,11 +1259,14 @@ const handleIncomingMessage = async (messages) => {
         direction: fromMe ? 'outbound' : 'inbound'
       };
 
-      // NEW: Save ALL messages to database (including own messages)
-      await saveMessageToSupabase(messageData);
+      // Save ALL messages to database (including own messages)
+      const saved = await saveMessageToSupabase(messageData);
+      if (!saved) {
+        logger.warn(`Failed to save message ${messageId} to database`);
+      }
 
-      // NEW: Send read receipt for ALL incoming messages (not just personal chats)
-      if (!fromMe) {
+      // Send read receipt for ALL incoming messages (not from me)
+      if (!fromMe && STATE.sock) {
         try {
           await STATE.sock.readMessages([msg.key]);
           logger.success(`✓ Blue tick sent for message ${messageId}`);
@@ -1154,14 +1275,14 @@ const handleIncomingMessage = async (messages) => {
         }
       }
 
-      // NEW: Forward to webhooks ONLY if NOT from me
+      // Forward to webhooks ONLY if NOT from me
       if (!fromMe) {
         const webhookPayload = {
           message_id: messageId,
           jid,
           phone_no: plainPhone,
           display_name: displayName,
-          type: messageType,
+          type: rawMessageType,
           text: extractedData.text,
           
           media_unique_id: extractedData.media_unique_id,
@@ -1186,7 +1307,8 @@ const handleIncomingMessage = async (messages) => {
       }
       
     } catch (err) {
-      logger.error(`Message handler: ${err.message}`);
+      logger.error(`Message handler error: ${err.message}`);
+      logger.debug(`Stack: ${err.stack}`);
     }
   }
 };
@@ -1227,7 +1349,6 @@ const cleanupConnection = (removeListeners = true) => {
     STATE.reconnectTimeout = null;
   }
   
-  // NEW: Stop presence updates
   stopPresenceUpdates();
 };
 
@@ -1238,7 +1359,7 @@ const calculateBackoff = (attempts) => {
 };
 
 // ============================================
-// START WHATSAPP CONNECTION - ENHANCED
+// FIX: START WHATSAPP CONNECTION
 // ============================================
 const startWhatsApp = async () => {
   try {
@@ -1260,16 +1381,16 @@ const startWhatsApp = async () => {
 
     STATE.sock = makeWASocket({
       version,
-      logger: pino({ level: 'silent' }),
+      logger: pino({ level: 'error' }), // FIXED: Changed from 'silent' to 'error'
       printQRInTerminal: false,
       auth: state,
       browser: Browsers.ubuntu('Chrome'),
       syncFullHistory: false,
-      markOnlineOnConnect: true, // Always mark as online when connecting
+      markOnlineOnConnect: true,
       connectTimeoutMs: 120000,
       defaultQueryTimeoutMs: 60000,
       keepAliveIntervalMs: 30000,
-      emitOwnEvents: true, // NEW: Enable to receive own messages
+      emitOwnEvents: true, // Enable to receive own messages
       fireInitQueries: true,
       generateHighQualityLinkPreview: false,
       shouldSyncHistoryMessage: () => false,
@@ -1304,7 +1425,6 @@ const startWhatsApp = async () => {
           STATE.currentQR = null;
           STATE.currentQRString = null;
           
-          // NEW: Stop presence updates on disconnect
           stopPresenceUpdates();
           
           const statusCode = lastDisconnect?.error?.output?.statusCode;
@@ -1406,7 +1526,6 @@ const startWhatsApp = async () => {
           logger.connect(`Name: ${chalk.yellow(STATE.sock.user?.name || 'Unknown')}`);
           logger.line();
           
-          // NEW: Start presence updates to stay online
           startPresenceUpdates();
           
           try {
@@ -1419,6 +1538,7 @@ const startWhatsApp = async () => {
         }
       } catch (err) {
         logger.error(`Connection update error: ${err.message}`);
+        logger.debug(`Stack: ${err.stack}`);
       }
     });
 
@@ -1431,20 +1551,37 @@ const startWhatsApp = async () => {
       }
     });
     
+    // FIXED: Handle ALL message events properly
     STATE.sock.ev.on('messages.upsert', async ({ messages, type }) => {
-      if (type === 'notify' || type === 'append') { // NEW: Also handle 'append' for own messages
+      logger.debug(`messages.upsert event - type: ${type}, count: ${messages.length}`);
+      
+      // Handle 'notify' (new messages) and 'append' (own messages/synced messages)
+      if (type === 'notify' || type === 'append') {
         handleIncomingMessage(messages).catch(err => {
           logger.error(`Message processing error: ${err.message}`);
+          logger.debug(`Stack: ${err.stack}`);
         });
+      } else {
+        logger.debug(`Ignoring message upsert type: ${type}`);
+      }
+    });
+
+    // ADDED: Handle message updates (for reactions, edits, deletions)
+    STATE.sock.ev.on('messages.update', async (updates) => {
+      logger.debug(`messages.update event: ${updates.length} updates`);
+      for (const update of updates) {
+        logger.debug(`Message update: ${JSON.stringify(update)}`);
       }
     });
 
     STATE.sock.ev.on('error', (err) => {
       logger.error(`Socket error: ${err.message}`);
+      logger.debug(`Stack: ${err.stack}`);
     });
 
   } catch (err) {
     logger.error(`Startup error: ${err.message}`);
+    logger.debug(`Stack: ${err.stack}`);
     
     const isAuthError = err.message.includes('decrypt') || 
                        err.message.includes('invalid') || 
@@ -1501,6 +1638,7 @@ app.get('/health', (req, res) => {
     telegram_configured: !!CONFIG.telegramBotToken && !!CONFIG.telegramChatId,
     self_ping_enabled: CONFIG.selfPingEnabled,
     presence_updates_active: !!STATE.presenceInterval,
+    debug_mode: CONFIG.debugMode,
     user: STATE.connectedUser ? {
       id: STATE.connectedUser.id,
       name: STATE.connectedUser.name
@@ -1572,7 +1710,8 @@ app.get('/qr', (req, res) => {
             <strong>✅ Blue Ticks on All Messages</strong><br>
             <strong>✅ All Messages Stored</strong><br>
             <strong>✅ Telegram Media Storage</strong><br>
-            <strong>✅ Self-Ping Active</strong>
+            <strong>✅ Self-Ping Active</strong><br>
+            <strong>✅ Message Unwrapping Fixed</strong>
           </div>
         </div>
       </body>
@@ -1830,7 +1969,6 @@ app.post('/clear-session', authMiddleware, async (req, res) => {
     cleanupConnection();
     STATE.isConnected = false;
     
-    // NEW: Stop self-ping during session clear
     stopSelfPing();
     
     await clearSession();
@@ -1841,7 +1979,6 @@ app.post('/clear-session', authMiddleware, async (req, res) => {
       logger.info('Restarting WhatsApp after session clear...');
       startWhatsApp();
       
-      // Restart self-ping
       setTimeout(() => startSelfPing(), 5000);
     }, 3000);
   } catch (err) {
@@ -1850,12 +1987,22 @@ app.post('/clear-session', authMiddleware, async (req, res) => {
   }
 });
 
+// NEW: Debug endpoint to toggle debug mode
+app.post('/debug/toggle', authMiddleware, (req, res) => {
+  CONFIG.debugMode = !CONFIG.debugMode;
+  res.json({ 
+    success: true, 
+    debug_mode: CONFIG.debugMode,
+    message: `Debug mode ${CONFIG.debugMode ? 'enabled' : 'disabled'}`
+  });
+});
+
 // ============================================
 // START SERVER
 // ============================================
 const server = app.listen(CONFIG.port, '0.0.0.0', () => {
   console.log('\n');
-  logger.banner('🚀 WHATSAPP API SERVER - ENHANCED VERSION 🚀');
+  logger.banner('🚀 WHATSAPP API SERVER - FIXED VERSION 🚀');
   logger.success(`Port: ${chalk.yellow(CONFIG.port)}`);
   logger.info(`QR Page: ${chalk.blue(`http://localhost:${CONFIG.port}/qr`)}`);
   logger.info(`Health: ${chalk.blue(`http://localhost:${CONFIG.port}/health`)}`);
@@ -1868,6 +2015,9 @@ const server = app.listen(CONFIG.port, '0.0.0.0', () => {
   
   if (CONFIG.n8nWebhooks.length > 0) {
     logger.success(`Webhooks: ${chalk.yellow(CONFIG.n8nWebhooks.length)} configured`);
+    CONFIG.n8nWebhooks.forEach((url, i) => {
+      logger.info(`  ${i + 1}. ${url.substring(0, 60)}${url.length > 60 ? '...' : ''}`);
+    });
   } else {
     logger.warn('⚠️  No webhooks - messages will NOT be forwarded');
   }
@@ -1879,11 +2029,13 @@ const server = app.listen(CONFIG.port, '0.0.0.0', () => {
   logger.success('✅ Store Own Messages: YES');
   logger.success('✅ Forward Own Messages: NO');
   logger.success(`✅ Self-Ping: ${CONFIG.selfPingEnabled ? 'ENABLED' : 'DISABLED'}`);
+  logger.success('✅ Message Unwrapping: FIXED');
+  logger.success('✅ Error Logging: ENABLED');
+  logger.info(`🐛 Debug Mode: ${CONFIG.debugMode ? chalk.green('ON') : chalk.gray('OFF')} (Toggle via POST /debug/toggle)`);
   logger.line();
   
   setTimeout(() => {
     startWhatsApp();
-    // Start self-ping after connection established
     setTimeout(() => startSelfPing(), 10000);
   }, 2000);
 });
@@ -1894,7 +2046,6 @@ const server = app.listen(CONFIG.port, '0.0.0.0', () => {
 const shutdown = async (signal) => {
   logger.warn(`${signal} received - shutting down gracefully...`);
   
-  // NEW: Stop self-ping
   stopSelfPing();
   
   if (STATE.reconnectTimeout) {
@@ -1905,7 +2056,6 @@ const shutdown = async (signal) => {
     try {
       logger.info('Disconnecting gracefully...');
       
-      // NEW: Stop presence updates
       stopPresenceUpdates();
       
       STATE.sock.end(undefined);
